@@ -8,10 +8,11 @@ import sys
 import random
 
 class common(object):    
-    adjListNor = []
-    adjListExq = []
-    nounList   = []
-    verbList   = []
+    adjListNor   = []
+    adjListExq   = []
+    nounList     = []
+    verbList     = []
+    silentEWords = []
     
     def getRandomFileLine(dataFile, listType, callback=None, callback2=None):
         with open(dataFile, 'r') as data:
@@ -31,12 +32,19 @@ class common(object):
     def getVowels(): return 'aeiou'
 
     def getConsonants(): return 'bcdfghjklmnpqrstvwxyz'
+    def getSilentEWords(): return ['close','move','live','have']
 
     def callback_makePresentParticiple(text, consonants=getConsonants(), vowels=getVowels()):
         if text.endswith('e'):
             return text[:-1]+'ing'
         elif (len(text) == 3) and (text[0] in consonants) and (text[1] in vowels) and (text[2] in consonants):        
             return text+text[2]+'ing'
+        elif text[-1] == 'l':
+            return text+'ling'
+        elif text in getSilentEWords():
+            return text[:-1]+'ing'
+        elif text[-2:] == 'ie':
+            return text[:-2]+'ying'
         else:
             return text+'ing'
     
