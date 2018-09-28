@@ -8,9 +8,7 @@ import sys
 import random
 
 class Common(object):
-  adjListNor = []
-  adjListExq = []
-  verbList   = []
+  adjListNor, adjListExq, verbList, nounList, nounListSat = ([] for i in xrange(5))
   getVowels          = 'aeiou'
   getConsonants      = 'bcdfghjklmnpqrstvwxyz'
   getEWordsSilent    = ['close','move','live','have']
@@ -20,7 +18,9 @@ class Common(object):
   def getRandomFileLine(cls, dataFile, listType, callback=None, callback2=None):
     with open(dataFile, 'r') as data:
       for i, each in enumerate(data):
-        listType.append(callback(each))
+        if callback:
+          each = callback(each)
+        listType.append(each)
       word = listType[random.randint(0, len(listType))-1].lower()
       if callback2:
         return callback2(word)
@@ -38,11 +38,16 @@ class Common(object):
         else:
           print '  '+word
 
+  @staticmethod
+  def callback_nounsListSat(text):
+    return text.split()[1].strip()
+
+  @staticmethod
   def callback_adjListExq(text):
     return text.split(':')[0]
 
-  @classmethod
-  def callback_verbList(cls, text): return text.strip()
+  @staticmethod
+  def callback_wordStrip(text): return text.strip()
 
   @classmethod
   def callback_makePresentParticiple(cls, text):
@@ -74,12 +79,22 @@ class Common(object):
 
 class Sentence(Common):
   @classmethod
-  def getRandomIngVerb(cls):
-    return cls.getRandomFileLine('../res/verbs-list', cls.verbList, cls.callback_verbList, cls.callback_makePresentParticiple)
+  def getVerbIng(cls):
+    return cls.getRandomFileLine('../res/verbs-list', cls.verbList, cls.callback_wordStrip, cls.callback_makePresentParticiple)
     #return cls.getRandomFileLineTest('../res/verbs-list-test', cls.verbList, cls.callback_verbList, cls.callback_makePresentParticiple)
     #return cls.test(cls.getConsonants)
 
+  @classmethod
+  def getAdjective(cls):
+    return cls.getRandomFileLine('../res/adjectives-list', cls.adjListNor, cls.callback_wordStrip)
+
+  @classmethod
+  def getNounSat(cls):
+    return cls.getRandomFileLine('../res/nouns-list-sat', cls.nounListSat, cls.callback_nounsListSat)
+
 if __name__ == '__main__':
   s = Sentence()
-  print s.getRandomIngVerb()
+  print s.getVerbIng()
+  print s.getAdjective()
+  print s.getNounSat()
 
