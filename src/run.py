@@ -49,6 +49,16 @@ class Common(object):
   @staticmethod
   def callback_wordStrip(text): return text.strip()
 
+  @staticmethod
+  def getToBe(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the'])
+
+  @staticmethod
+  def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This'])
+
+  @classmethod
+  def test(cls, test=None): print cls.getConsonants
+
+class Grammar(Common):
   @classmethod
   def callback_makePresentParticiple(cls, text):
     consonants      = cls.getConsonants
@@ -74,19 +84,10 @@ class Common(object):
     else:
       return text+'ing'
 
-  @staticmethod
-  def getToBe(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the'])
-
-  @staticmethod
-  def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This'])
-
   @classmethod
   def callback_makeNounPlural(cls, text): pass
 
-  @classmethod
-  def test(cls, test=None): print cls.getConsonants
-
-class Sentence(Common):
+class Sentence(Grammar):
   @classmethod
   def getVerbIng(cls):
     return cls.getRandomFileLine('../res/verbs-list', cls.verbList, cls.callback_wordStrip, cls.callback_makePresentParticiple)
@@ -109,7 +110,7 @@ class Sentence(Common):
 
   @classmethod
   def buildSentenceSingle(cls):
-    return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getToBe() +' '+ cls.getNoun()
+    return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getToBe() +' '+ cls.getNoun() +'.'
 
   @classmethod
   def buildSentencePlural(cls): pass
