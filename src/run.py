@@ -115,9 +115,15 @@ class Sentence(Grammar):
   @classmethod
   def buildSentencePlural(cls): pass
 
+  @classmethod
+  def buildSentenceSingle_genMultiple(cls, quantity):
+    for n in xrange(quantity):
+      print cls.buildSentenceSingle()
+
 if __name__ == '__main__':
   s = Sentence()
   print s.buildSentenceSingle()
+  s.buildSentenceSingle_genMultiple(20)
   #print s.getVerbIng()
   #print s.getAdjective()
   #print s.getAdjectiveExq()
