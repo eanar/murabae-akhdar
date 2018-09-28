@@ -7,7 +7,7 @@ import re
 import sys
 import random
 
-class common(object):    
+class Common(object):    
     adjListNor   = []
     adjListExq   = []
     nounList     = []
@@ -45,11 +45,11 @@ class common(object):
     def getEWordsNonSilent(): return ['be','see']
 
     def callback_makePresentParticiple(text, consonants=getConsonants(), vowels=getVowels(), eWordsSilent=getEWordsSilent(), eWordsNonSilent=getEWordsNonSilent()):
-        if text in eWordsNonSilent:
-            return text+'ing'
-        elif text[-2:] == 'ie':
+        if text[-2:] == 'ie':
             return text[:-2]+'ying'
-        elif text in eWordsSilent:
+        elif text.endswith('e') and (text in eWordsNonSilent):
+            return text+'ing'
+        elif text.endswith('e') and (text in eWordsSilent):
             return text[:-1]+'ing'
         elif text[-1] == 'l':
             return text+'ling'
@@ -59,8 +59,6 @@ class common(object):
             return text+text[-1]+'ing'
         elif (len(text) == 3) and (len([letter for letter in text if letter in vowels]) == 1) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):        
             return text+text[2]+'ing'
-        elif text.endswith('e'):
-            return text[:-1]+'ing'
         else:
             return text+'ing'
     
