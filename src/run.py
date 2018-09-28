@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# Imaginary sentence builder
 # Teal bananas are floating in guava juice.
 
 import os
@@ -74,6 +74,15 @@ class Common(object):
     else:
       return text+'ing'
 
+  @staticmethod
+  def getToBe(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the'])
+
+  @staticmethod
+  def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This'])
+
+  @classmethod
+  def callback_makeNounPlural(cls, text): pass
+
   @classmethod
   def test(cls, test=None): print cls.getConsonants
 
@@ -81,20 +90,35 @@ class Sentence(Common):
   @classmethod
   def getVerbIng(cls):
     return cls.getRandomFileLine('../res/verbs-list', cls.verbList, cls.callback_wordStrip, cls.callback_makePresentParticiple)
-    #return cls.getRandomFileLineTest('../res/verbs-list-test', cls.verbList, cls.callback_verbList, cls.callback_makePresentParticiple)
-    #return cls.test(cls.getConsonants)
 
   @classmethod
   def getAdjective(cls):
     return cls.getRandomFileLine('../res/adjectives-list', cls.adjListNor, cls.callback_wordStrip)
 
   @classmethod
+  def getAdjectiveExq(cls):
+    return cls.getRandomFileLine('../res/adjectives-list-exquisite', cls.adjListExq, cls.callback_adjListExq)
+
+  @classmethod
+  def getNoun(cls):
+    return cls.getRandomFileLine('../res/nouns-list', cls.nounList, cls.callback_wordStrip)
+
+  @classmethod
   def getNounSat(cls):
     return cls.getRandomFileLine('../res/nouns-list-sat', cls.nounListSat, cls.callback_nounsListSat)
 
+  @classmethod
+  def buildSentenceSingle(cls):
+    return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getToBe() +' '+ cls.getNoun()
+
+  @classmethod
+  def buildSentencePlural(cls): pass
+
 if __name__ == '__main__':
   s = Sentence()
-  print s.getVerbIng()
-  print s.getAdjective()
-  print s.getNounSat()
-
+  print s.buildSentenceSingle()
+  #print s.getVerbIng()
+  #print s.getAdjective()
+  #print s.getAdjectiveExq()
+  #print s.getNounSat()
+  #print s.getNoun()
