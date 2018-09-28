@@ -50,6 +50,10 @@ class Common(object):
   def callback_wordStrip(text): return text.strip()
 
   @staticmethod
+  def callback_htmlSpan(text):
+    return '<span id="test">'+ text +'</span></ br>'
+
+  @staticmethod
   def getToBe(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the'])
 
   @staticmethod
@@ -116,14 +120,17 @@ class Sentence(Grammar):
   def buildSentencePlural(cls): pass
 
   @classmethod
-  def buildSentenceSingle_genMultiple(cls, quantity):
+  def buildSentenceSingle_genMultiple(cls, quantity, callback=None):
     for n in xrange(quantity):
-      print cls.buildSentenceSingle()
+      sentence = cls.buildSentenceSingle()
+      if callback:
+        sentence = callback(sentence)
+      print sentence
 
 if __name__ == '__main__':
   s = Sentence()
   print s.buildSentenceSingle()
-  s.buildSentenceSingle_genMultiple(20)
+  s.buildSentenceSingle_genMultiple(120, s.callback_htmlSpan)
   #print s.getVerbIng()
   #print s.getAdjective()
   #print s.getAdjectiveExq()
