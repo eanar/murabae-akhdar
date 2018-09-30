@@ -15,17 +15,11 @@ class Common(object):
   getEWordsNonSilent = ['be','see']
 
   @classmethod
-  def getRandomFileLine(cls, dataFile, listType, callback=None, callback2=None):
+  def getRandomFileLine(cls, dataFile, listType):
     with open(dataFile, 'r') as data:
       for i, each in enumerate(data):
-        if callback:
-          each = callback(each)
         listType.append(each)
-      word = listType[random.randint(0, len(listType))-1].lower()
-      if callback2:
-        return callback2(word)
-      else:
-        return word
+      return listType[random.randint(0, len(listType))-1].lower()
 
   @classmethod
   def getRandomFileLineTest(cls, dataFile, listType, callback=None, callback2=None):
@@ -62,57 +56,92 @@ class Common(object):
   @classmethod
   def test(cls, test=None): print cls.getConsonants
 
-class Grammar(Common):
-  @classmethod
-  def callback_makePresentParticiple(cls, text):
-    consonants      = cls.getConsonants
-    vowels          = cls.getVowels
-    eWordsSilent    = cls.getEWordsSilent
-    eWordsNonSilent = cls.getEWordsNonSilent
-    if text[-2:] == 'ie':
-      return text[:-2]+'ying'
-    elif text.endswith('e') and (text in eWordsNonSilent):
-      return text+'ing'
-    elif text.endswith('e') and (text in eWordsSilent):
-      return text[:-1]+'ing'
-    elif text.endswith('e') and (text not in eWordsNonSilent):
-      return text[:-1]+'ing'
-    elif text[-1] == 'l':
-      return text+'ling'
-    elif text[-2:] == 'ic':
-      return text+'king'
-    elif (len([letter for letter in text if letter in vowels]) >= 2) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
-      return text+text[-1]+'ing'
-    elif (len(text) == 3) and (len([letter for letter in text if letter in vowels]) == 1) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
-      return text+text[2]+'ing'
-    else:
-      return text+'ing'
+class Decorators(Common):
+  @staticmethod
+  def htmlSpan(func):
+    def wrap(text):
+      return '<span id="test">'+ func(text) +'</span></ br>'
+    return wrap
 
+  @staticmethod
+  def wordStrip(func):
+    def wrap(text):
+      return func(text).strip()
+    return wrap
+
+  @staticmethod
+  def adjListExq(func):
+    def wrap(text):
+      return func(text).split(':')[0]
+    return wrap
+
+  @staticmethod
+  def nounsListSat(func):
+    def wrap(text):
+      return func(text).split()[1].strip()
+    return wrap
+
+  @classmethod
+  def makePresentParticiple(cls, func):
+    def wrap(text):
+      consonants      = cls.getConsonants
+      vowels          = cls.getVowels
+      eWordsSilent    = cls.getEWordsSilent
+      eWordsNonSilent = cls.getEWordsNonSilent
+      text = func(text).strip()
+      if text[-2:] == 'ie':
+        return text[:-2]+'ying'
+      elif text.endswith('e') and (text in eWordsNonSilent):
+        return text+'ing'
+      elif text.endswith('e') and (text in eWordsSilent):
+        return text[:-1]+'ing'
+      elif text.endswith('e') and (text not in eWordsNonSilent):
+        return text[:-1]+'ing'
+      elif text[-1] == 'l':
+        return text+'ling'
+      elif text[-2:] == 'ic':
+        return text+'king'
+      elif (len([letter for letter in text if letter in vowels]) >= 2) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
+        return text+text[-1]+'ing'
+      elif (len(text) == 3) and (len([letter for letter in text if letter in vowels]) == 1) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
+        return text+text[2]+'ing'
+      else:
+        return text+'ing'
+    return wrap
+
+class Grammar(Common):
   @classmethod
   def callback_makeNounPlural(cls, text): pass
 
 class Sentence(Grammar):
   @classmethod
+  @Decorators.wordStrip
+  @Decorators.makePresentParticiple
   def getVerbIng(cls):
-    return cls.getRandomFileLine('../res/verbs-list', cls.verbList, cls.callback_wordStrip, cls.callback_makePresentParticiple)
+    return cls.getRandomFileLine('../res/verbs-list', cls.verbList)
 
   @classmethod
+  @Decorators.wordStrip
   def getAdjective(cls):
-    return cls.getRandomFileLine('../res/adjectives-list', cls.adjListNor, cls.callback_wordStrip)
+    return cls.getRandomFileLine('../res/adjectives-list', cls.adjListNor)
 
   @classmethod
+  @Decorators.adjListExq
   def getAdjectiveExq(cls):
-    return cls.getRandomFileLine('../res/adjectives-list-exquisite', cls.adjListExq, cls.callback_adjListExq)
+    return cls.getRandomFileLine('../res/adjectives-list-exquisite', cls.adjListExq)
 
   @classmethod
+  @Decorators.wordStrip
   def getNoun(cls):
-    return cls.getRandomFileLine('../res/nouns-list', cls.nounList, cls.callback_wordStrip)
+    return cls.getRandomFileLine('../res/nouns-list', cls.nounList)
 
   @classmethod
+  @Decorators.nounsListSat
   def getNounSat(cls):
-    return cls.getRandomFileLine('../res/nouns-list-sat', cls.nounListSat, cls.callback_nounsListSat)
+    return cls.getRandomFileLine('../res/nouns-list-sat', cls.nounListSat)
 
   @classmethod
+  @Decorators.htmlSpan
   def buildSentenceSingle(cls):
     return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getToBe() +' '+ cls.getNoun() +'.'
 
@@ -120,17 +149,15 @@ class Sentence(Grammar):
   def buildSentencePlural(cls): pass
 
   @classmethod
-  def buildSentenceSingle_genMultiple(cls, quantity, callback=None):
+  def buildSentenceSingle_genMultiple(cls, quantity):
     for n in xrange(quantity):
       sentence = cls.buildSentenceSingle()
-      if callback:
-        sentence = callback(sentence)
       print sentence
 
 if __name__ == '__main__':
   s = Sentence()
-  print s.buildSentenceSingle()
-  s.buildSentenceSingle_genMultiple(120, s.callback_htmlSpan)
+  #print s.buildSentenceSingle()
+  s.buildSentenceSingle_genMultiple(110)
   #print s.getVerbIng()
   #print s.getAdjective()
   #print s.getAdjectiveExq()
