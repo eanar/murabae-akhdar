@@ -8,11 +8,11 @@ import sys
 import random
 
 class Common(object):
-  adjListNor, adjListExq, verbList, nounList, nounListSat = ([] for i in xrange(5))
   getVowels          = 'aeiou'
   getConsonants      = 'bcdfghjklmnpqrstvwxyz'
-  getEWordsSilent    = ['close','move','live','have']
+  getEWordsSilent    = ['close','move','live','have','catalogue']
   getEWordsNonSilent = ['be','see']
+  adjListNor, adjListExq, verbList, nounList, nounListSat = ([] for i in xrange(5))
 
   @classmethod
   def getRandomFileLine(cls, dataFile, listType):
@@ -103,7 +103,7 @@ class Decorators(Common):
         return text+'king'
       elif (len([letter for letter in text if letter in vowels]) >= 2) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
         return text+text[-1]+'ing'
-      elif (len(text) == 3) and (len([letter for letter in text if letter in vowels]) == 1) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
+      elif (len(text) >= 3) and (len([letter for letter in text if letter in vowels]) == 1) and (text[-3] in consonants) and (text[-2] in vowels) and (text[-1] in consonants):
         return text+text[2]+'ing'
       else:
         return text+'ing'
