@@ -48,10 +48,10 @@ class Common(object):
     return '<span id="test">'+ text +'</span></ br>'
 
   @staticmethod
-  def getToBe(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the'])
+  def getToBe_(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the'])
 
   @staticmethod
-  def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This'])
+  def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This', 'That', 'Their', 'His', 'Her'])
 
   @classmethod
   def test(cls, test=None): print cls.getConsonants
@@ -79,6 +79,17 @@ class Decorators(Common):
   def nounsListSat(func):
     def wrap(text):
       return func(text).split()[1].strip()
+    return wrap
+
+  @classmethod
+  def prefixToBe(cls, func):
+    def wrap(text):
+      vowels          = cls.getVowels
+      text = func(text).strip()
+      if text[0] in vowels:
+        return random.choice(['at an ','in an ','on an ','at the ','in the ','on the '])+ text
+      else:
+        return random.choice(['at a ','in a ', 'on a '])+ text
     return wrap
 
   @classmethod
@@ -140,10 +151,15 @@ class Sentence(Grammar):
   def getNounSat(cls):
     return cls.getRandomFileLine('../res/nouns-list-sat', cls.nounListSat)
 
+  @staticmethod
+  @Decorators.prefixToBe
+  def getPrefixToBe(text):
+    return text
+
   @classmethod
   @Decorators.htmlSpan
   def buildSentenceSingle(cls):
-    return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getToBe() +' '+ cls.getNoun() +'.'
+    return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getPrefixToBe(cls.getNoun()) +'.'
 
   @classmethod
   def buildSentencePlural(cls): pass
@@ -163,3 +179,4 @@ if __name__ == '__main__':
   #print s.getAdjectiveExq()
   #print s.getNounSat()
   #print s.getNoun()
+  #print s.getPrefixToBe(s.getNoun())
