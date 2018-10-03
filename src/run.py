@@ -82,6 +82,22 @@ class Decorators(Common):
     return wrap
 
   @classmethod
+  def makeNounPlural(cls, func):
+    def wrap(text):
+      consonants      = cls.getConsonants
+      vowels          = cls.getVowels
+      text = func(text).strip()
+      if (text[-2] in consonants) and (text[-1] == 'y'):
+        return text[:-1]+ 'ies'
+      elif text[-2:] == 'ch':
+        return text+'es'
+      elif (text[-1] == 's') or (text[-4:] == 'tion'):
+        return text
+      else:
+        return text+'s'
+    return wrap
+
+  @classmethod
   def prefixToBe(cls, func):
     def wrap(text):
       vowels          = cls.getVowels
@@ -120,9 +136,7 @@ class Decorators(Common):
         return text+'ing'
     return wrap
 
-class Grammar(Common):
-  @classmethod
-  def callback_makeNounPlural(cls, text): pass
+class Grammar(Common): pass
 
 class Sentence(Grammar):
   @classmethod
@@ -156,6 +170,11 @@ class Sentence(Grammar):
   def getPrefixToBe(text):
     return text
 
+  @staticmethod
+  @Decorators.makeNounPlural
+  def getNounPlural(text):
+    return text
+
   @classmethod
   @Decorators.htmlSpan
   def buildSentenceSingle(cls):
@@ -173,10 +192,12 @@ class Sentence(Grammar):
 if __name__ == '__main__':
   s = Sentence()
   #print s.buildSentenceSingle()
-  s.buildSentenceSingle_genMultiple(110)
+  #s.buildSentenceSingle_genMultiple(10)
   #print s.getVerbIng()
   #print s.getAdjective()
   #print s.getAdjectiveExq()
   #print s.getNounSat()
   #print s.getNoun()
   #print s.getPrefixToBe(s.getNoun())
+  print s.getNounPlural(s.getNoun())
+  #print s.getNounPlural('workbench')
