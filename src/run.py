@@ -181,7 +181,9 @@ class Sentence(Grammar):
     return cls.getDeterminer() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounSat() +' is '+ cls.getVerbIng() +' '+ cls.getPrefixToBe(cls.getNoun()) +'.'
 
   @classmethod
-  def buildSentencePlural(cls): pass
+  @Decorators.htmlSpan
+  def buildSentencePluralSingle(cls):
+    return cls.getDeterminerPlural() +' '+ cls.getAdjectiveExq() +' '+ cls.getNounPlural(cls.getNounSat()) +' are '+ cls.getVerbIng() +' '+ cls.getPrefixToBe(cls.getNoun()) +'.'
 
   @classmethod
   def buildSentenceSingle_genMultiple(cls, quantity):
@@ -193,11 +195,12 @@ if __name__ == '__main__':
   s = Sentence()
   #print s.buildSentenceSingle()
   #s.buildSentenceSingle_genMultiple(10)
+  print s.buildSentencePluralSingle()
   #print s.getVerbIng()
   #print s.getAdjective()
   #print s.getAdjectiveExq()
   #print s.getNounSat()
   #print s.getNoun()
   #print s.getPrefixToBe(s.getNoun())
-  print s.getNounPlural(s.getNoun())
+  #print s.getNounPlural(s.getNoun())
   #print s.getNounPlural('workbench')
