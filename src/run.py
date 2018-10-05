@@ -53,6 +53,9 @@ class Common(object):
   @staticmethod
   def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This', 'That', 'Their', 'His', 'Her'])
 
+  @staticmethod
+  def getDeterminerPlural(): return random.choice(['Those', 'My', 'Some', 'These', 'Their', 'His', 'Her'])
+
   @classmethod
   def test(cls, test=None): print cls.getConsonants
 
@@ -103,9 +106,9 @@ class Decorators(Common):
       vowels          = cls.getVowels
       text = func(text).strip()
       if text[0] in vowels:
-        return random.choice(['at an ','in an ','on an ','at the ','in the ','on the '])+ text
+        return random.choice(['the', 'at an ','in an ','on an ','in the ','on the '])+ text
       else:
-        return random.choice(['at a ','in a ', 'on a '])+ text
+        return random.choice(['the ','at a ','in a ', 'on a '])+ text
     return wrap
 
   @classmethod
