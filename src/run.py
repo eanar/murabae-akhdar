@@ -48,9 +48,6 @@ class Common(object):
     return '<span id="test">'+ text +'</span></ br>'
 
   @staticmethod
-  def getToBe_(): return random.choice(['in', 'in a', 'in the', 'on', 'on a', 'on the '])
-
-  @staticmethod
   def getDeterminer(): return random.choice(['The', 'My', 'Some', 'This', 'That', 'Their', 'His', 'Her'])
 
   @staticmethod
