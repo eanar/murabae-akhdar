@@ -11,7 +11,8 @@ class Common(object):
   getVowels          = 'aeiou'
   getConsonants      = 'bcdfghjklmnpqrstvwxyz'
   getEWordsSilent    = ['close','move','live','have','catalogue']
-  getEWordsNonSilent = ['be','see','guarantee']
+  getEWordsNonSilent = ['agree','decree','disagree','flee','free',
+                        'oversee','be','see','guarantee']
   adjListNor, adjListExq, verbList, nounList, nounListSat = ([] for i in xrange(5))
 
   @classmethod
