@@ -15,6 +15,18 @@ class Common(object):
                         'oversee','be','see','guarantee']
   adjListNor, adjListExq, verbList, nounList, nounListSat = ([] for i in xrange(5))
 
+  @staticmethod
+  def writeToFile(dataFile):
+    with open(dataFile, 'w') as data:
+      data.write(lines)
+
+  @classmethod
+  def _getRandomFileLine(cls, dataFile, listType, qty):
+    with open(dataFile, 'r') as data:
+      for i, each in enumerate(data):
+        listType.append(each)
+      return [ listType[random.randint(0, len(listType))-1].lower() for i in xrange(qty) ]
+
   @classmethod
   def getRandomFileLine(cls, dataFile, listType):
     with open(dataFile, 'r') as data:
@@ -150,25 +162,66 @@ class Sentence(Grammar):
   def getVerbIng(cls):
     return cls.getRandomFileLine('../res/verbs-list', cls.verbList)
 
+  @staticmethod
+  @Decorators.wordStrip
+  @Decorators.makePresentParticiple
+  def processVerb(word): return word
+
+  @classmethod
+  def getVerbIngList(cls, qty):
+      return [ cls.processVerb(each) for each in cls._getRandomFileLine('../res/verbs-list', cls.verbList, qty) ]
+
   @classmethod
   @Decorators.wordStrip
   def getAdjective(cls):
     return cls.getRandomFileLine('../res/adjectives-list', cls.adjListNor)
+
+  @staticmethod
+  @Decorators.wordStrip
+  def processAdjective(word): return word
+
+  @classmethod
+  def getAdjectiveList(cls, qty):
+    return [ cls.processAdjective(each) for each in cls._getRandomFileLine('../res/adjectives-list', cls.adjListNor, qty) ]
 
   @classmethod
   @Decorators.adjListExq
   def getAdjectiveExq(cls):
     return cls.getRandomFileLine('../res/adjectives-list-exquisite', cls.adjListExq)
 
+  @staticmethod
+  @Decorators.adjListExq
+  def processAdjectiveExq(word): return word
+
+  @classmethod
+  def getAdjectiveExqList(cls, qty):
+    return [ cls.processAdjectiveExq(each) for each in cls._getRandomFileLine('../res/adjectives-list-exquisite', cls.adjListExq, qty) ]
+
   @classmethod
   @Decorators.wordStrip
   def getNoun(cls):
     return cls.getRandomFileLine('../res/nouns-list', cls.nounList)
 
+  @staticmethod
+  @Decorators.wordStrip
+  def processNoun(word): return word
+
+  @classmethod
+  def getNounList(cls, qty):
+    return [ cls.processNoun(each) for each in cls._getRandomFileLine('../res/nouns-list', cls.nounList, qty) ]
+
   @classmethod
   @Decorators.nounsListSat
   def getNounSat(cls):
     return cls.getRandomFileLine('../res/nouns-list-sat', cls.nounListSat)
+
+  @staticmethod
+  @Decorators.nounsListSat
+  def processNounSat(word): return word
+
+  @classmethod
+  def getNounSatList(cls, qty):
+    return [ cls.processNounSat(each) for each in cls._getRandomFileLine('../res/nouns-list-sat', cls.nounListSat, qty) ]
 
   @staticmethod
   @Decorators.prefixToBe
@@ -200,17 +253,48 @@ class Sentence(Grammar):
       sentence = cls.buildSentencePlural()
       print sentence
 
+  @staticmethod
+  @Decorators.htmlSpan
+  def processHtmlSpan(text): return text
+
+  @classmethod
+  def _buildSentencePluralMultiple(cls, quantity):
+    w1 = [ cls.getDeterminerPlural() for x in xrange(quantity) ]
+    w2 = cls.getAdjectiveExqList(quantity)
+    w3 = [ cls.getNounPlural(cls.getNounSat()) for x in xrange(quantity) ]
+    w4 = cls.getVerbIngList(quantity)
+    w5 = [ cls.getPrefixToBe(cls.getNoun()) for x in xrange(quantity) ]
+    #print w1, w2, w3, w4, w5
+    for i in xrange(quantity):
+      print cls.processHtmlSpan( w1[i] +' '+ w2[i] +' '+ w3[i] +' are '+ w4[i] +' '+ w5[i] +'.' )
+
 if __name__ == '__main__':
   s = Sentence()
   #print s.buildSentenceSingle()
   #s.buildSentenceSingleMultiple(10)
   #print s.buildSentencePlural()
-  s.buildSentencePluralMultiple(10)
+
+  #s.buildSentencePluralMultiple(1500)
+  ''' real  0m12.040s
+      user  0m7.651s
+      sys   0m3.293s'''
+
+  s._buildSentencePluralMultiple(5)
+  #s._buildSentencePluralMultiple(1500)
+  ''' real  0m26.699s
+      user  0m8.280s
+      sys   0m5.565s'''
+
   #print s.getVerbIng()
+  #print s.getVerbIngList(5)
   #print s.getAdjective()
+  #print s.getAdjectiveList(5)
   #print s.getAdjectiveExq()
+  #print s.getAdjectiveExqList(5)
   #print s.getNounSat()
+  #print s.getNounSatList(5)
   #print s.getNoun()
+  #print s.getNounList(5)
   #print s.getPrefixToBe(s.getNoun())
   #print s.getNounPlural(s.getNoun())
   #print s.getNounPlural('workbench')
