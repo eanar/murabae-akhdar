@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import random
+import argparse
 
 class Common(object):
   getVowels          = 'aeiou'
@@ -298,7 +299,16 @@ class Sentence(Grammar):
       print w1[i] +' '+ w2[i] +' '+ w3[i] +' are '+ w4[i] +' '+ w5[i] +'.'
 
 if __name__ == '__main__':
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-t',  '--type',  type=str, action='store', help='Type: [single|plural]', default='single')
+  parser.add_argument('-c',  '--count', type=int, action='store', help='Count: # of sentences to generate', default=1)
+  args = parser.parse_args()
+  print "OPTIONS %s" % (args)
+
   s = Sentence()
-  s.buildSentenceSingleMultiple(105)
-  #s.buildSentencePluralMultiple(105)
-  #s.buildSentencePluralMultiple(1500)
+  if args.type == 'single':
+    s.buildSentenceSingleMultiple(args.count)
+  elif args.type == 'plural':
+    s.buildSentencePluralMultiple(args.count)
+  else:
+    print "USAGE: run.py -t plural -c 10"
